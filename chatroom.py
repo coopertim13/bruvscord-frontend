@@ -14,19 +14,19 @@ for i in range(6):
 
 def getMessagesReverse():
     messages = requests.get(
-        "https://bruvscord.herokuapp.com/messages?order=desc&num=6")
+        "https://bruvscord.onrender.com/messages?order=desc&num=6")
     return json.loads(messages.content.decode())
 
 
 def sendMessage(name, message):
     data = {"message": message}
     addMessage = requests.post(
-        f"http://bruvscord.herokuapp.com/messages/add/{name}", data=data)
+        f"https://bruvscord.onrender.com/messages/add/{name}", data=data)
     return addMessage.content.decode()
 
 
 def getUsers():
-    users = requests.get("https://bruvscord.herokuapp.com/users")
+    users = requests.get("https://bruvscord.onrender.com/users")
     return json.loads(users.content.decode())
 
 
@@ -34,14 +34,17 @@ def fillContent():
     allMessages = getMessagesReverse()
     users = getUsers()
     for i in range(6):
-        labels[i]["text"] = f"{allMessages[i]['sender']} says: {allMessages[i]['content']}"
-        found = False
-        for user in users:
-            if user["name"] == allMessages[i]["sender"]:
-                labels[i]["bg"] = user["color"]
-                found = True
-        if not found:
-            labels[i]["bg"] = "#abc123"
+        try:
+            labels[i]["text"] = f"{allMessages[i]['sender']} says: {allMessages[i]['content']}"
+            found = False
+            for user in users:
+                if user["name"] == allMessages[i]["sender"]:
+                    labels[i]["bg"] = user["color"]
+                    found = True
+            if not found:
+                labels[i]["bg"] = "#abc123"
+        except:
+            continue
 
 
 T = tk.Text(window, height=5, width=52)
@@ -50,7 +53,7 @@ T.pack()
 
 def sendMessagePrepare():
     content = T.get("1.0", "end").strip()
-    sender = "callan"
+    sender = "wayne"
     sendMessage(sender, content)
 
 
